@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 14:39:53 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/19 17:27:46 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/20 19:14:58 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,20 @@ void	my_sleep(int time, t_phil *phil)
 	struct timeval	end;
 
 	gettimeofday(&start, NULL);
-	while (!phil->resrc->stop)
+	while (1)
 	{
 		gettimeofday(&end, NULL);
 		if (((end.tv_sec * 1000 + end.tv_usec / 1000)
 				- (start.tv_sec * 1000 + start.tv_usec / 1000)) >= time)
 			break ;
 		usleep(100);
+		pthread_mutex_lock(&phil->resrc->stop_mutex);
+		if (phil->resrc->stop)
+		{
+			pthread_mutex_unlock(&phil->resrc->stop_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&phil->resrc->stop_mutex);
 	}
 }
 

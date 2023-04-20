@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:21:20 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/19 17:14:42 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/20 19:20:39 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,9 @@ int	check_meals(t_phil *phil)
 
 void	philosopher_died(t_phil *phil)
 {
-	pthread_mutex_lock(&phil->resrc->stop_mutex);
 	phil->dead = 1;
 	print_statement("died\n", phil);
+	pthread_mutex_lock(&phil->resrc->stop_mutex);
 	phil->resrc->stop = 1;
 	pthread_mutex_unlock(&phil->resrc->stop_mutex);
 }
