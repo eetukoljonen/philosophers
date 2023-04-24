@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:21:20 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/20 19:20:39 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/24 12:35:28 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,21 +25,23 @@ int	check_meals(t_phil *phil)
 
 	ctr = 0;
 	eat_ctr = 0;
-	if (phil->resrc->eat > 0)
+	while (ctr < phil->resrc->phils)
 	{
-		while (ctr < phil->resrc->phils)
+		if (phil[ctr].how_many_times >= phil->resrc->eat)
+			eat_ctr++;
+		if (eat_ctr == phil->resrc->phils)
 		{
-			if (phil[ctr].how_many_times >= phil->resrc->eat)
-				eat_ctr++;
-			if (eat_ctr == phil->resrc->phils)
+			ctr = 0;
+			while (ctr < phil->resrc->phils)
 			{
-				pthread_mutex_lock(&phil[ctr].resrc->stop_mutex);
-				phil->resrc->stop = 1;
-				pthread_mutex_unlock(&phil[ctr].resrc->stop_mutex);
-				return (1);
+				pthread_mutex_lock(&phil[ctr].resrc->stop_mutex[ctr]);
+				phil[ctr].stop = 1;
+				pthread_mutex_unlock(&phil[ctr].resrc->stop_mutex[ctr]);
+				ctr++;
 			}
-			ctr++;
+			return (1);
 		}
+		ctr++;
 	}
 	return (0);
 }
@@ -50,13 +52,17 @@ int	check_meals(t_phil *phil)
 **	we also use mutexes so there wont be any data races
 */
 
-void	philosopher_died(t_phil *phil)
+void	philosopher_died(t_phil *phil, int ctr)
 {
-	phil->dead = 1;
-	print_statement("died\n", phil);
-	pthread_mutex_lock(&phil->resrc->stop_mutex);
-	phil->resrc->stop = 1;
-	pthread_mutex_unlock(&phil->resrc->stop_mutex);
+	print_statement("died\n", &phil[ctr]);
+	ctr = 0;
+	while (ctr < phil->resrc->phils)
+	{
+		pthread_mutex_lock(&phil[ctr].resrc->stop_mutex[ctr]);
+		phil[ctr].stop = 1;
+		pthread_mutex_unlock(&phil[ctr].resrc->stop_mutex[ctr]);
+		ctr++;
+	}
 }
 
 /*
@@ -71,18 +77,19 @@ void	check_phil_status(t_phil *phil)
 	int				ctr;
 
 	ctr = 0;
-	while (!phil->resrc->stop)
+	while (!phil->stop)
 	{
-		if (check_meals(phil))
-			break ;
-		while (ctr < phil->resrc->phils && !phil->resrc->stop)
+		if (phil->resrc->eat > 0)
+			if (check_meals(phil))
+				break ;
+		while (ctr < phil->resrc->phils && !phil[ctr].stop)
 		{
 			gettimeofday(&t, NULL);
 			pthread_mutex_lock(&phil[ctr].resrc->eat_mutex);
 			if (((t.tv_sec * 1000 + t.tv_usec / 1000)
 					- (phil[ctr].eat.tv_sec * 1000 + phil[ctr].eat.tv_usec
 						/ 1000)) >= phil[ctr].resrc->time_to_die)
-				philosopher_died(&phil[ctr]);
+				philosopher_died(phil, ctr);
 			pthread_mutex_unlock(&phil[ctr].resrc->eat_mutex);
 			ctr++;
 		}

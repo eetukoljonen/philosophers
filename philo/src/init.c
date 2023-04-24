@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 14:36:33 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/19 17:23:11 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/24 12:41:14 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,11 @@ t_resrc	*get_resrc(int argc, char **argv)
 		resrc->eat = ft_atoi(argv[5]);
 	else
 		resrc->eat = -1;
-	resrc->stop = 0;
 	resrc->fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
 			* resrc->phils);
-	if (!resrc->fork)
+	resrc->stop_mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t)
+			* resrc->phils);
+	if (!resrc->fork || !resrc->stop_mutex)
 	{
 		free(resrc);
 		error_exit(RESOURCE_FAIL);
@@ -78,17 +79,18 @@ t_phil	*init_philosophers(t_resrc *resrc)
 	{
 		if (pthread_mutex_init(&resrc->fork[ctr], NULL) != 0)
 			free_exit(INIT_FAIL, phils);
+		if (pthread_mutex_init(&resrc->stop_mutex[ctr], NULL) != 0)
+			free_exit(INIT_FAIL, phils);
 		phils[ctr].resrc = resrc;
 		phils[ctr].how_many_times = 0;
 		phils[ctr].number = ctr + 1;
 		phils[ctr].fork = ctr;
+		phils[ctr].stop = 0;
 		ctr++;
 	}
 	if (pthread_mutex_init(&resrc->eat_mutex, NULL) != 0)
 		free_exit(INIT_FAIL, phils);
 	if (pthread_mutex_init(&resrc->print, NULL) != 0)
-		free_exit(INIT_FAIL, phils);
-	if (pthread_mutex_init(&resrc->stop_mutex, NULL) != 0)
 		free_exit(INIT_FAIL, phils);
 	return (phils);
 }

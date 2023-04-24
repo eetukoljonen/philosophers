@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 14:47:08 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/20 19:20:02 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/24 12:46:42 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,13 @@ void	print_statement(char *s, t_phil *phil)
 
 	gettimeofday(&time, NULL);
 	pthread_mutex_lock(&phil->resrc->print);
-	pthread_mutex_lock(&phil->resrc->stop_mutex);
-	if (!phil->resrc->stop)
+	pthread_mutex_lock(&phil->resrc->stop_mutex[phil->number - 1]);
+	if (!phil->stop)
 		printf("%ld %d %s", ((time.tv_sec * 1000 + time.tv_usec / 1000)
 				- (phil->resrc->start.tv_sec * 1000
 					+ phil->resrc->start.tv_usec / 1000)), phil->number, s);
-	if (!phil->dead || phil->resrc->stop)
-		pthread_mutex_unlock(&phil->resrc->print);
-	pthread_mutex_unlock(&phil->resrc->stop_mutex);
+	pthread_mutex_unlock(&phil->resrc->print);
+	pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
 }
 
 /*
@@ -71,20 +70,25 @@ void	*eatsleepthink(void *arg)
 
 	phil = (t_phil *)arg;
 	if (phil->number % 2 && phil->resrc->phils > 1)
-		my_sleep(phil->resrc->time_to_eat, phil);
+	{
+		if (phil->resrc->time_to_eat > 10)
+			my_sleep(phil->resrc->time_to_eat / 2, phil);
+		else
+			my_sleep(phil->resrc->time_to_eat, phil);
+	}
 	while (1)
 	{
 		eat(phil);
 		print_statement("is sleeping\n", phil);
 		my_sleep(phil->resrc->time_to_sleep, phil);
 		print_statement("is thinking\n", phil);
-		pthread_mutex_lock(&phil->resrc->stop_mutex);
-		if (phil->resrc->stop)
+		pthread_mutex_lock(&phil->resrc->stop_mutex[phil->number - 1]);
+		if (phil->stop)
 		{
-			pthread_mutex_unlock(&phil->resrc->stop_mutex);
+			pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
 			break ;
 		}
-		pthread_mutex_unlock(&phil->resrc->stop_mutex);
+		pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
 	}
 	return (NULL);
 }

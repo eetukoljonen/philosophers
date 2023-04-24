@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 14:43:45 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/19 17:24:44 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/24 12:35:30 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,14 @@ void	stop_simulation(t_phil *phils)
 			pthread_join(phils[ctr].phil, NULL);
 	ctr = -1;
 	while (++ctr < phils->resrc->phils)
+	{
 		pthread_mutex_destroy(&phils->resrc->fork[ctr]);
+		pthread_mutex_destroy(&phils->resrc->stop_mutex[ctr]);
+	}
 	pthread_mutex_destroy(&phils->resrc->eat_mutex);
 	pthread_mutex_destroy(&phils->resrc->print);
-	pthread_mutex_destroy(&phils->resrc->stop_mutex);
 	free(phils->resrc->fork);
+	free(phils->resrc->stop_mutex);
 	free(phils->resrc);
 	free(phils);
 }

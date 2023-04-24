@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/09 18:48:40 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/19 16:04:27 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/24 12:44:57 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,10 @@ typedef struct s_resrc
 	int				time_to_eat;
 	int				phils;
 	int				eat;
-	int				stop;
 	pthread_mutex_t	*fork;
 	pthread_mutex_t	eat_mutex;
 	pthread_mutex_t	print;
-	pthread_mutex_t	stop_mutex;
+	pthread_mutex_t	*stop_mutex;
 	struct timeval	start;
 }					t_resrc;
 
@@ -51,7 +50,7 @@ typedef struct s_phil
 	pthread_t		phil;
 	struct timeval	eat;
 	int				number;
-	int				dead;
+	int				stop;
 	int				how_many_times;
 	int				fork;
 	t_resrc			*resrc;
@@ -92,5 +91,5 @@ void		error_exit(char *s);
 */
 void		check_phil_status(t_phil *phil);
 int			check_meals(t_phil *phil);
-void		philosopher_died(t_phil *phil);
+void		philosopher_died(t_phil *phil, int ctr);
 #endif

@@ -6,14 +6,14 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 14:39:53 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/20 19:14:58 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/24 12:47:06 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
 /*
-**	sleeps a given amount of time in millsecons
+**	sleeps a given amount of time in millseconds
 **	reason we use this insted of just usleep
 **	is that usleep looses its precision with big
 **	numbers
@@ -32,13 +32,13 @@ void	my_sleep(int time, t_phil *phil)
 				- (start.tv_sec * 1000 + start.tv_usec / 1000)) >= time)
 			break ;
 		usleep(100);
-		pthread_mutex_lock(&phil->resrc->stop_mutex);
-		if (phil->resrc->stop)
+		pthread_mutex_lock(&phil->resrc->stop_mutex[phil->number - 1]);
+		if (phil->stop)
 		{
-			pthread_mutex_unlock(&phil->resrc->stop_mutex);
+			pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
 			break ;
 		}
-		pthread_mutex_unlock(&phil->resrc->stop_mutex);
+		pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
 	}
 }
 
@@ -86,7 +86,7 @@ void	ft_putstr_fd(char *s, int fd)
 }
 
 /*
-**	checks if the string is a digit
+**	checks if the string is a number
 */
 
 int	ft_is_number(char *s)
