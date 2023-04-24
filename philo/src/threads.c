@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 14:43:45 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/24 12:35:30 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/24 13:31:22 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,5 @@ void	begin_simulation(t_phil	*phils)
 		ctr++;
 	}
 	check_phil_status(phils);
-	pthread_mutex_unlock(&phils->resrc->print);
 	stop_simulation(phils);
 }
