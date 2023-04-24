@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:21:20 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/24 12:35:28 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/24 17:27:54 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,8 +84,8 @@ void	check_phil_status(t_phil *phil)
 				break ;
 		while (ctr < phil->resrc->phils && !phil[ctr].stop)
 		{
-			gettimeofday(&t, NULL);
 			pthread_mutex_lock(&phil[ctr].resrc->eat_mutex);
+			gettimeofday(&t, NULL);
 			if (((t.tv_sec * 1000 + t.tv_usec / 1000)
 					- (phil[ctr].eat.tv_sec * 1000 + phil[ctr].eat.tv_usec
 						/ 1000)) >= phil[ctr].resrc->time_to_die)
