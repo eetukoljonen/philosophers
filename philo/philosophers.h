@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/09 18:48:40 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/24 12:44:57 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/25 13:18:59 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int			ft_is_number(char *s);
 int			ft_isdigit(int c);
 void		ft_putstr_fd(char *s, int fd);
 int			ft_atoi(const char *str);
-void		my_sleep(int time, t_phil *phil);
+int			ft_strncmp(const char *s1, const char *s2, size_t n);
 /*
 **	threads
 */
@@ -78,6 +78,7 @@ void		stop_simulation(t_phil *phils);
 /*
 **	eatsleepthink
 */
+void		my_sleep(int time, t_phil *phil);
 void		*eatsleepthink(void *arg);
 void		eat(t_phil *phil);
 void		print_statement(char *s, t_phil *phil);

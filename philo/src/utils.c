@@ -6,40 +6,27 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 14:39:53 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/24 12:47:06 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/25 13:19:03 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
 /*
-**	sleeps a given amount of time in millseconds
-**	reason we use this insted of just usleep
-**	is that usleep looses its precision with big
-**	numbers
+**	my implementation of strncmp
 */
 
-void	my_sleep(int time, t_phil *phil)
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
 {
-	struct timeval	start;
-	struct timeval	end;
+	size_t	ctr;
 
-	gettimeofday(&start, NULL);
-	while (1)
-	{
-		gettimeofday(&end, NULL);
-		if (((end.tv_sec * 1000 + end.tv_usec / 1000)
-				- (start.tv_sec * 1000 + start.tv_usec / 1000)) >= time)
-			break ;
-		usleep(100);
-		pthread_mutex_lock(&phil->resrc->stop_mutex[phil->number - 1]);
-		if (phil->stop)
-		{
-			pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
-			break ;
-		}
-		pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
-	}
+	ctr = 0;
+	if (n == 0)
+		return (0);
+	while (ctr < n - 1 && s1[ctr] == s2[ctr]
+		&& s1[ctr] != '\0' && s2[ctr] != '\0')
+		ctr++;
+	return ((unsigned char)s1[ctr] - (unsigned char)s2[ctr]);
 }
 
 /*

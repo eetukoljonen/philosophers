@@ -6,11 +6,41 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 14:47:08 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/24 17:30:46 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/04/25 13:19:00 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
+
+/*
+**	sleeps a given amount of time in millseconds
+**	reason we use this insted of just usleep
+**	is that usleep looses its precision with big
+**	numbers
+*/
+
+void	my_sleep(int time, t_phil *phil)
+{
+	struct timeval	start;
+	struct timeval	end;
+
+	gettimeofday(&start, NULL);
+	while (1)
+	{
+		gettimeofday(&end, NULL);
+		if (((end.tv_sec * 1000 + end.tv_usec / 1000)
+				- (start.tv_sec * 1000 + start.tv_usec / 1000)) >= time)
+			break ;
+		usleep(100);
+		pthread_mutex_lock(&phil->resrc->stop_mutex[phil->number - 1]);
+		if (phil->stop)
+		{
+			pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
+			break ;
+		}
+		pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
+	}
+}
 
 /*
 **	this function prints the time that has passed since
@@ -29,7 +59,8 @@ void	print_statement(char *s, t_phil *phil)
 		printf("%ld %d %s", ((time.tv_sec * 1000 + time.tv_usec / 1000)
 				- (phil->resrc->start.tv_sec * 1000
 					+ phil->resrc->start.tv_usec / 1000)), phil->number, s);
-	pthread_mutex_unlock(&phil->resrc->print);
+	if (ft_strncmp(s, "died\n", 10) != 0)
+		pthread_mutex_unlock(&phil->resrc->print);
 	pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
 }
 
