@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/09 18:48:40 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/25 13:18:59 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/07/12 14:53:31 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,6 @@ void		error_exit(char *s);
 **	main
 */
 void		check_phil_status(t_phil *phil);
-int			check_meals(t_phil *phil);
+int		check_meals(t_phil *phil, int eat_ctr);
 void		philosopher_died(t_phil *phil, int ctr);
 #endif

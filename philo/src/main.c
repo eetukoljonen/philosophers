@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:21:20 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/25 13:19:05 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/07/12 14:53:27 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,17 +18,17 @@
 **	and returns one when true
 */
 
-int	check_meals(t_phil *phil)
+int	check_meals(t_phil *phil, int eat_ctr)
 {
-	int	eat_ctr;
 	int	ctr;
 
 	ctr = 0;
-	eat_ctr = 0;
 	while (ctr < phil->resrc->phils)
 	{
+		pthread_mutex_lock(&phil->resrc->stop_mutex[ctr]);
 		if (phil[ctr].how_many_times >= phil->resrc->eat)
 			eat_ctr++;
+		pthread_mutex_unlock(&phil->resrc->stop_mutex[ctr]);
 		if (eat_ctr == phil->resrc->phils)
 		{
 			ctr = 0;
@@ -80,7 +80,7 @@ void	check_phil_status(t_phil *phil)
 	while (!phil->stop)
 	{
 		if (phil->resrc->eat > 0)
-			if (check_meals(phil))
+			if (check_meals(phil, 0))
 				break ;
 		while (ctr < phil->resrc->phils && !phil[ctr].stop)
 		{

@@ -6,7 +6,7 @@
 /*   By: ekoljone <ekoljone@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 14:47:08 by ekoljone          #+#    #+#             */
-/*   Updated: 2023/04/25 13:19:00 by ekoljone         ###   ########.fr       */
+/*   Updated: 2023/07/12 14:53:30 by ekoljone         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,9 @@ void	eat(t_phil *phil)
 	gettimeofday(&phil->eat, NULL);
 	pthread_mutex_unlock(&phil->resrc->eat_mutex);
 	my_sleep(phil->resrc->time_to_eat, phil);
+	pthread_mutex_lock(&phil->resrc->stop_mutex[phil->number - 1]);
 	phil->how_many_times += 1;
+	pthread_mutex_unlock(&phil->resrc->stop_mutex[phil->number - 1]);
 	pthread_mutex_unlock(&phil->resrc->fork[(phil->fork + 1)
 		% phil->resrc->phils]);
 	pthread_mutex_unlock(&phil->resrc->fork[phil->fork]);

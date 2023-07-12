@@ -2,7 +2,7 @@ NAME = philo
 SRC = main.c eatsleepthink.c free.c init.c threads.c utils.c
 OBJECT = $(addprefix $(OBJDIR)/,$(SRC:.c=.o))
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I. -g
+CFLAGS = -Wall -Wextra -Werror -I. -O3
 RM = rm -f
 OBJDIR = obj
 SRCDIR = src
